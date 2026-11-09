@@ -49,6 +49,8 @@ void run_puncture_tagger_unit_test()
         check_max_levels({1.0, 1.0}, {6, 6});
         check_max_levels({1.0, 1.999}, {6, 6});
         check_max_levels({1.0, 2.0}, {6, 5});
+        // A ratio of 2 reached only to within a solver tolerance still counts
+        check_max_levels({1.0, 2.0 * (1.0 - 1.0e-9)}, {6, 5});
         check_max_levels({1.0, 3.999}, {6, 5});
         check_max_levels({1.0, 4.0}, {6, 4});
         check_max_levels({1.0, 8.0}, {6, 3});

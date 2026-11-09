@@ -29,7 +29,12 @@ level. A puncture at least twice as massive is covered by one fewer level, a
 puncture at least four times as massive by two fewer levels, and so on. In
 general, the reduction relative to the finest level is
 $\lfloor\log_2(M/M_{\min})\rfloor$. This keeps the physical resolution relative
-to each black hole's mass approximately comparable.
+to each black hole's mass approximately comparable. The masses are the same
+physical masses as those used by the
+[binary-puncture eta profile](gauge_classes.md#binary-puncture-eta-profile):
+the TwoPunctures ADM masses of the punctures, or `bh1.mass` and `bh2.mass`
+without TwoPunctures. A mass ratio within a relative tolerance of $10^{-6}$ of
+a power of two counts as reaching it.
 
 - `puncture_tagging.finest_level_factor` controls the size of the finest tagged region relative to the puncture mass.
 - `puncture_tagging.level_separation` controls how quickly the tagged region around each puncture grows between successive refinement levels.

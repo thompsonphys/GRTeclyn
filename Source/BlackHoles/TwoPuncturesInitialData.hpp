@@ -73,24 +73,16 @@ class TwoPuncturesInitialData
             s_two_punctures.center_offset[offset_dir] + s_two_punctures.par_b;
     }
 
-    void add_bh_mass_params()
+    //! Return the ADM masses of the punctures as {minus, plus}, i.e. {bh1,
+    //! bh2}, which TwoPunctures computes after its final solve whether it was
+    //! given bare masses or solved for target masses. These are the physical
+    //! black-hole masses: they agree with the apparent-horizon masses for
+    //! non-spinning punctures (Eq. (6) of arXiv:gr-qc/0610128). The bare mass
+    //! parameters are not, and can be much smaller for spinning punctures.
+    std::array<amrex::Real, 2> get_puncture_adm_masses()
     {
-        // If bh1.mass or bh2.mass not specified in the parameter file,
-        // then TwoPunctures masses are given. This is not in set_bh_params
-        // since set_bh_params is only called in void ...::initData(), and
-        // these masses need to be set for each restart too.
-
-        amrex::Real bh1_mass = s_two_punctures.give_bare_mass
-                                   ? s_two_punctures.par_m_minus
-                                   : s_two_punctures.target_M_minus;
-        amrex::Real bh2_mass = s_two_punctures.give_bare_mass
-                                   ? s_two_punctures.par_m_plus
-                                   : s_two_punctures.target_M_plus;
-
-        GRParmParse bh1_pp("bh1");
-        GRParmParse bh2_pp("bh2");
-        bh1_pp.queryAdd("mass", bh1_mass);
-        bh2_pp.queryAdd("mass", bh2_mass);
+        solve();
+        return {s_two_punctures.mm_adm, s_two_punctures.mp_adm};
     }
 
     AMREX_FORCE_INLINE void

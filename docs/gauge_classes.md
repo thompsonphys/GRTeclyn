@@ -52,8 +52,8 @@ The following runtime parameters set the corresponding coefficients in the equat
 ### Binary-puncture eta profile
 
 `BHMovingPunctureGauge` replaces the constant $\eta_*$ with a mass-dependent
-profile. If $m_p$ and $r_p$ are the mass of puncture $p$ and the coordinate
-distance from it, respectively, the profile is
+profile. If $m_p$ and $r_p$ are the mass of black hole $p$ and the coordinate
+distance from its puncture, respectively, the profile is
 
 $$
 \eta_*=\frac{\eta_1r_2^2+\eta_2r_1^2}{r_1^2+r_2^2},
@@ -63,7 +63,15 @@ $$
 Thus $\eta_*$ approaches $1/(2m_p)$ at each puncture and varies smoothly
 between the two values. `BinaryBH` constructs this gauge from the masses and
 current positions stored by `PunctureTracker`. For equal masses the profile
-reduces to a spatially constant $1/(2m_p)$. `MovingPunctureGauge` remains
+reduces to a spatially constant $1/(2m_p)$.
+
+The masses are the physical black-hole masses. With TwoPunctures initial data
+they are the ADM masses of the punctures that TwoPunctures computes, whether
+it is given bare masses or solves for target masses. These agree with the
+apparent-horizon masses for non-spinning punctures (Eq. (6) of
+[Brügmann et al. 2008](https://arxiv.org/abs/gr-qc/0610128)), whereas the bare
+mass parameters can be much smaller, especially for spinning punctures. Without
+TwoPunctures, the masses are `bh1.mass` and `bh2.mass`. `MovingPunctureGauge` remains
 available to examples that use the value set by `gauge.eta`.
 
 ### Far-field eta cutoff

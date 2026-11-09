@@ -145,6 +145,12 @@ void BinaryBHLevel::initData()
         BoostedBHInitialData::params_t bh2_params(2);
 #ifdef USE_TWOPUNCTURES
         two_punctures_initial_data.set_bh_params(bh1_params, bh2_params);
+        // The gauge and the tagging use the physical (ADM) masses of the
+        // punctures rather than the bare masses stored by set_bh_params
+        const auto puncture_adm_masses =
+            two_punctures_initial_data.get_puncture_adm_masses();
+        bh1_params.mass = puncture_adm_masses[0];
+        bh2_params.mass = puncture_adm_masses[1];
 #else
         bh1_params.fill_params();
         bh2_params.fill_params();

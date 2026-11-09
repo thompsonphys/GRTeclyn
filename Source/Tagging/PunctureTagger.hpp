@@ -36,6 +36,11 @@ template <unsigned int num_punctures> class PunctureTagger
     amrex::Real m_level_separation{1.5};
     amrex::Real m_finest_level_factor{2.0};
 
+    //! Relative tolerance on the mass-ratio thresholds, so that masses whose
+    //! ratio reaches a power of two only to within, e.g., the TwoPunctures
+    //! ADM-mass tolerance still count as reaching it
+    static constexpr amrex::Real s_mass_ratio_tolerance = 1.0e-6;
+
   public:
     static void check_params()
     {
@@ -107,7 +112,8 @@ template <unsigned int num_punctures> class PunctureTagger
             int level_reduction          = 0;
             amrex::Real next_mass_cutoff = 2.0 * minimum_mass;
             while (level_reduction < m_max_level &&
-                   m_puncture_masses[ipuncture] >= next_mass_cutoff)
+                   m_puncture_masses[ipuncture] >=
+                       next_mass_cutoff * (1.0 - s_mass_ratio_tolerance))
             {
                 ++level_reduction;
                 next_mass_cutoff *= 2.0;
