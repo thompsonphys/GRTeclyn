@@ -197,6 +197,11 @@ class GRAmrLevel : public amrex::AmrLevel
 
     GRAmr *m_gr_amr_ptr = nullptr;
 
+    //! Read the level's parameters and set up the boundary conditions. Called
+    //! by the full constructor and by post_restart, because AMReX
+    //! default-constructs the levels it reads from a checkpoint.
+    void set_up_from_parameters();
+
   protected:
 
     int m_evolution_spatial_derivative_order = 4; // default to 4th order

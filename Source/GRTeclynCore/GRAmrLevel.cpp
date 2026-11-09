@@ -80,11 +80,16 @@ GRAmrLevel::GRAmrLevel(amrex::Amr &papa, int lev, const amrex::Geometry &geom,
                        amrex::Real time)
     : amrex::AmrLevel(papa, lev, geom, box_array, distribution_mapping, time)
 {
+    set_up_from_parameters();
+}
+
+void GRAmrLevel::set_up_from_parameters()
+{
     GRParmParse pp;
     pp.get("evolution.nan_check", nan_check);
     pp.query("evolution.spatial_derivative_order",
              m_evolution_spatial_derivative_order);
-    m_boundaries.define(geom);
+    m_boundaries.define(Geom());
 }
 
 GRAmrLevel::~GRAmrLevel() = default;
@@ -238,9 +243,9 @@ void GRAmrLevel::post_init(amrex::Real /*stop_time*/)
 void GRAmrLevel::post_restart()
 {
     // Levels are default-constructed when AMReX reads a checkpoint, so the
-    // geometry-dependent boundary data has not been initialised by the usual
-    // level constructor.
-    m_boundaries.define(Geom());
+    // parameters and boundary data that the usual level constructor sets up
+    // (e.g. the spatial derivative order) have not been initialised yet.
+    set_up_from_parameters();
 
     if (Level() == 0)
     {
