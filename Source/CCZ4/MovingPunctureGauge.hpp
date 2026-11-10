@@ -159,7 +159,7 @@ template <class deriv_t = FourthOrderDerivatives> class MovingPunctureGauge
      * from geometry.center. The coefficient \f$c_f\f$ is 1 when
      * gauge.enable_eta_cutoff is true and 0 otherwise.
      */
-    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+    AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE void
     compute_eta(amrex::Real &eta_of_x, int ix, int iy, int iz) const
     {
         const Coordinates coords(amrex::IntVect(ix, iy, iz), m_dx,

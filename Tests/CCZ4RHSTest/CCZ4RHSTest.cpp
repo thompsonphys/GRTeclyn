@@ -197,6 +197,22 @@ void run_ccz4_rhs_test()
         CHECK(eta_at_midpoint == doctest::Approx(0.375));
         CHECK(eta_at_second_puncture == doctest::Approx(0.5));
 
+        // Without the puncture-mass profile, eta is gauge.eta everywhere
+        pp.add("gauge.use_puncture_mass_eta", false);
+        const gauge_t constant_eta_gauge(1.0, puncture_masses, puncture_coords);
+
+        amrex::Real constant_eta_at_first_puncture{};
+        amrex::Real constant_eta_at_midpoint{};
+        amrex::Real constant_eta_at_second_puncture{};
+        constant_eta_gauge.compute_eta(constant_eta_at_first_puncture, 0, 0, 0);
+        constant_eta_gauge.compute_eta(constant_eta_at_midpoint, 2, 0, 0);
+        constant_eta_gauge.compute_eta(constant_eta_at_second_puncture, 4, 0,
+                                       0);
+
+        CHECK(constant_eta_at_first_puncture == doctest::Approx(1.82));
+        CHECK(constant_eta_at_midpoint == doctest::Approx(1.82));
+        CHECK(constant_eta_at_second_puncture == doctest::Approx(1.82));
+
         // GPU barrier
         amrex::Gpu::streamSynchronize();
     }

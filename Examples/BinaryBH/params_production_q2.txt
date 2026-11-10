@@ -135,7 +135,8 @@ evolution.spatial_derivative_order = 6
 # Shift evolution
 gauge.shift_advec_coeff = 1.0
 # gauge.shift_Gamma_coeff = 0.75
-# gauge.eta is replaced by the puncture-mass profile in this example
+# gauge.use_puncture_mass_eta = true # false: use the constant gauge.eta
+# gauge.eta = 1.0 # used only if gauge.use_puncture_mass_eta = false
 
 # Eta cutoff
 gauge.enable_eta_cutoff = true

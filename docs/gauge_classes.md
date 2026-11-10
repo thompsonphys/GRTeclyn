@@ -74,6 +74,11 @@ mass parameters can be much smaller, especially for spinning punctures. Without
 TwoPunctures, the masses are `bh1.mass` and `bh2.mass`. `MovingPunctureGauge` remains
 available to examples that use the value set by `gauge.eta`.
 
+To use the constant `gauge.eta` in `BHMovingPunctureGauge` instead of the
+profile, set `gauge.use_puncture_mass_eta = false`. The default is `true`. The
+puncture masses then have no effect on eta, but the mass-dependent tagging (see
+[Tagging criteria](tagging.md)) still uses them.
+
 ### Far-field eta cutoff
 
 `MovingPunctureGauge` can optionally make the Gamma driver damping parameter spatially varying according to [Eq. (11) of Schnetter (2010)](https://arxiv.org/abs/1003.0859):

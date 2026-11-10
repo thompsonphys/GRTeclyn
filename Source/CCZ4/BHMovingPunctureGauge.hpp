@@ -6,6 +6,7 @@
 #ifndef BHMOVINGPUNCTUREGAUGE_HPP_
 #define BHMOVINGPUNCTUREGAUGE_HPP_
 
+#include "GRParmParse.hpp"
 #include "MovingPunctureGauge.hpp"
 
 #include <AMReX_BLassert.H>
@@ -26,6 +27,7 @@ class BHMovingPunctureGauge : public MovingPunctureGauge<deriv_t>
   private:
     puncture_masses_t m_puncture_masses{};
     puncture_coords_t m_puncture_coords{};
+    bool m_use_puncture_mass_eta{true}; //!< false: use the constant gauge.eta
 
   public:
     template <class masses_t, class coords_t>
@@ -33,10 +35,13 @@ class BHMovingPunctureGauge : public MovingPunctureGauge<deriv_t>
                           const coords_t &a_puncture_coords)
         : MovingPunctureGauge<deriv_t>(a_dx)
     {
+        GRParmParse gauge_pp("gauge");
+        gauge_pp.query("use_puncture_mass_eta", m_use_puncture_mass_eta);
+
         for (std::size_t puncture = 0; puncture < num_punctures; ++puncture)
         {
             AMREX_ALWAYS_ASSERT_WITH_MESSAGE(
-                a_puncture_masses[puncture] > 0.0,
+                !m_use_puncture_mass_eta || a_puncture_masses[puncture] > 0.0,
                 "Puncture masses must be greater than zero when calculating "
                 "the puncture-dependent gauge eta");
             m_puncture_masses[puncture] = a_puncture_masses[puncture];
@@ -47,16 +52,34 @@ class BHMovingPunctureGauge : public MovingPunctureGauge<deriv_t>
         }
     }
 
+    /// Check the parameters of MovingPunctureGauge and the eta profile switch.
+    static void check_params()
+    {
+        MovingPunctureGauge<deriv_t>::params_t::check_params();
+
+        GRParmParse gauge_pp("gauge");
+        bool use_puncture_mass_eta = true;
+        gauge_pp.queryAdd("use_puncture_mass_eta", use_puncture_mass_eta);
+    }
+
     /// Compute the spatially varying Gamma-driver damping parameter.
-    /** First calculates \f$\eta_p=1/(2m_p)\f$ and interpolates between the
+    /** If gauge.use_puncture_mass_eta is false, this is the constant
+     * gauge.eta of MovingPunctureGauge. Otherwise it first calculates
+     * \f$\eta_p=1/(2m_p)\f$ and interpolates between the
      * two punctures using
-     * \f$\eta_*=(\eta_1r_2^2+\eta_2r_1^2)/(r_1^2+r_2^2)\f$. It then applies
-     * the optional far-field cutoff configured by the inherited gauge
+     * \f$\eta_*=(\eta_1r_2^2+\eta_2r_1^2)/(r_1^2+r_2^2)\f$. Both cases then
+     * apply the optional far-field cutoff configured by the inherited gauge
      * parameters.
      */
     AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE void
     compute_eta(amrex::Real &eta_of_x, int ix, int iy, int iz) const
     {
+        if (!m_use_puncture_mass_eta)
+        {
+            MovingPunctureGauge<deriv_t>::compute_eta(eta_of_x, ix, iy, iz);
+            return;
+        }
+
         const amrex::IntVect cell_index(ix, iy, iz);
         const Coordinates coords(cell_index, this->m_dx, this->m_params.center);
         const amrex::Real radius = coords.get_radius();
